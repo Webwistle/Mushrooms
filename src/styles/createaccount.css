@@ -8,6 +8,10 @@
     padding: 20px;
     background-color:#e8d8c3;
   }
+  .image-container img{
+    height:500px;
+    width:800px;
+  }
   
   @media (min-width: 768px) {
     .main-container {
