@@ -3,6 +3,7 @@ import Header from "../components/Header";
 import SignupForm from "../components/SignupForm";
 import "../styles/createaccount.css";
 import mushroom from "../asserts/mushroom.jpg";
+import Footer from "../components/Footer";
 
 const CreateAccountPage = () => {
   return (
@@ -18,7 +19,9 @@ const CreateAccountPage = () => {
           />
         </div>
         <SignupForm />
+        
       </div>
+      <Footer />
     </div>
   );
 };
