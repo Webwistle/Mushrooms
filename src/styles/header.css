@@ -1,0 +1,38 @@
+/* Header Styles */
+.header {
+    background-color: #e8d8c3;
+    color: #4e3b31;
+    padding: 10px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #4e3b31;
+  }
+  
+  .logo {
+    font-size: 24px;
+    font-weight: bold;
+  }
+  
+  .nav-links {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+  }
+  
+  .nav-links li {
+    cursor: pointer;
+    transition: color 0.3s;
+  }
+  
+  .nav-links li:hover {
+    color: #9e7c66;
+  }
+  
+  @media (max-width: 768px) {
+    .nav-links {
+      flex-direction: column;
+      gap: 10px;
+    }
+  }
+  
