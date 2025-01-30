@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import "../styles/signupform.css";
-import { db } from "../firebaseConfig";
-import { collection, addDoc } from "firebase/firestore";
+import { auth, db } from "../firebaseConfig";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { collection, doc, setDoc } from "firebase/firestore";
+import { useNavigate } from "react-router-dom";
 
 const SignupForm = () => {
   const [name, setName] = useState("");
@@ -10,33 +12,46 @@ const SignupForm = () => {
   const [mobile, setMobile] = useState("");
   const [pinCode, setPinCode] = useState("");
   const [address, setAddress] = useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const docRef = await addDoc(collection(db, "users"), {
+      // ✅ Step 1: Create user in Firebase Authentication
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const user = userCredential.user;
+
+      // ✅ Step 2: Store user details in Firestore
+      await setDoc(doc(collection(db, "users"), user.uid), {
         name,
         email,
-        password,
         mobile,
         pinCode,
         address,
         orders: [], // Empty array for ordered items
+        uid: user.uid, // Storing UID for reference
       });
 
-      console.log("Document written with ID:", docRef.id);
-      alert("Account successfully created!");
+      alert("Account successfully created! Please verify your email.");
 
-      // Clear form fields after successful submission
+      // ✅ Step 3: Clear form fields
       setName("");
       setEmail("");
       setPassword("");
       setMobile("");
       setPinCode("");
       setAddress("");
+
+      // ✅ Step 4: Redirect to login page
+      navigate("/login");
     } catch (error) {
-      console.error("Error adding document:", error);
+      console.error("Error during signup:", error);
+      alert(error.message);
     }
   };
 
@@ -45,28 +60,64 @@ const SignupForm = () => {
       <h2 className="form-title">Create an account</h2>
       <p className="form-subtitle">Enter your details below</p>
       <form className="form" onSubmit={handleSubmit}>
-        <input type="text" placeholder="Name" className="form-input" value={name} onChange={(e) => setName(e.target.value)} required />
-        <input type="email" placeholder="Email" className="form-input" value={email} onChange={(e) => setEmail(e.target.value)} required />
-        <input type="password" placeholder="Password" className="form-input" value={password} onChange={(e) => setPassword(e.target.value)} required />
-        <input type="number" placeholder="Mobile Number" className="form-input" value={mobile} onChange={(e) => setMobile(e.target.value)} required />
-        <input type="number" placeholder="Pin Code" className="form-input" value={pinCode} onChange={(e) => setPinCode(e.target.value)} required />
-        <input type="text" placeholder="Address" className="form-input" value={address} onChange={(e) => setAddress(e.target.value)} required />
-        
+        <input
+          type="text"
+          placeholder="Name"
+          className="form-input"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+        />
+        <input
+          type="email"
+          placeholder="Email"
+          className="form-input"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          className="form-input"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+        <input
+          type="number"
+          placeholder="Mobile Number"
+          className="form-input"
+          value={mobile}
+          onChange={(e) => setMobile(e.target.value)}
+          required
+        />
+        <input
+          type="number"
+          placeholder="Pin Code"
+          className="form-input"
+          value={pinCode}
+          onChange={(e) => setPinCode(e.target.value)}
+          required
+        />
+        <input
+          type="text"
+          placeholder="Address"
+          className="form-input"
+          value={address}
+          onChange={(e) => setAddress(e.target.value)}
+          required
+        />
+
         <button type="submit" className="form-button">
           Sign Up
         </button>
-        
-        <button type="button" className="google-button">
-          <img
-            src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/512px-Google_%22G%22_Logo.svg.png"
-            alt="Google Logo"
-            className="google-logo"
-          />
-          Sign up with Google
-        </button>
-        
+
         <p className="login-text">
-          Already have an account? <span className="login-link">Log in</span>
+          Already have an account?{" "}
+          <span className="login-link" onClick={() => navigate("/login")}>
+            Log in
+          </span>
         </p>
       </form>
     </div>
