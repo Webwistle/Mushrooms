@@ -16,7 +16,12 @@
   font-weight: bold;
   transition: font-size 0.3s ease;
 }
-
+.base {
+  background-color:black;
+  
+  height: 25px;
+  
+}
 .nav-links {
   list-style: none;
   display: flex;

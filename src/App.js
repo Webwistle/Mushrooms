@@ -7,7 +7,7 @@ import {
 import { AuthProvider, useAuth } from "./context/AuthContext"; // Import AuthProvider
 import CreateAccountPage from "./Pages/CreateAccountPage";
 import LoginAccountPage from "./Pages/LoginAccountPage";
-import HomePage from "./Pages/HomePage";
+import HomePage from "./Pages/Home";
 
 function App() {
   return (

@@ -48,7 +48,10 @@ const styles = {
 
 const Header = () => {
   return (
+    <div>
+    <div className="base">Mushrooms</div>
     <nav style={styles.nav}>
+      
       <div style={styles.logo}>Exclusive</div>
       <div style={styles.navLinks}>
         <a href="#" style={styles.navLink}>
@@ -73,6 +76,7 @@ const Header = () => {
         <Search style={styles.searchIcon} />
       </div>
     </nav>
+    </div>
   );
 };
 

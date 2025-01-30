@@ -1,0 +1,11 @@
+.home {
+  min-height: 100vh;
+  background-color: #e8d8c3;
+  font-family: 'Inter', sans-serif;
+}
+
+@media (max-width: 768px) {
+  .home {
+    padding: 8px;
+  }
+}

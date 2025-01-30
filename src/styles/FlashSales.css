@@ -1,0 +1,112 @@
+.flash-sales {
+  background: #e8d8c3;
+  padding: 32px;
+}
+
+.flash-sales-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+.title-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.today-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.indicator-bar {
+  width: 4px;
+  height: 16px;
+  background: #DB4444;
+}
+
+.today-text {
+  color: #DB4444;
+}
+
+.section-title {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.navigation-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.nav-button {
+  background: white;
+  border: none;
+  padding: 8px;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.nav-button:hover {
+  background: #f5f5f5;
+}
+
+.items-container {
+  display: flex;
+  gap: 24px; /* Space between items */
+  overflow-x: auto; /* Enable horizontal scrolling */
+  padding-bottom: 16px;
+  scroll-behavior: smooth; /* Smooth scrolling effect */
+  white-space: nowrap; 
+  scrollbar-width: none; /* Prevent items from wrapping */
+}
+
+.items-container::-webkit-scrollbar {
+  height: 8px; /* Height of the scrollbar */
+}
+
+.items-container::-webkit-scrollbar-thumb {
+  background: #4e3b31; /* Scrollbar thumb color */
+  border-radius: 4px; /* Rounded scrollbar thumb */
+}
+
+.items-container::-webkit-scrollbar-track {
+  background: #e8d8c3; /* Scrollbar track background */
+}
+
+.item {
+  /* Prevent shrinking and set width to 280px */
+  width: 280px;
+  height: 220px;
+}
+
+/* Media query for phone-sized screens */
+@media (max-width: 768px) {
+  /* Stack the elements vertically in order: Today, Flash Sales, and Timer */
+  .flash-sales-header {
+    flex-direction: column; /* Stack the header items vertically */
+    align-items: flex-start; /* Align items to the left */
+  }
+
+  .today-indicator {
+    flex-direction: row; /* Ensure indicator bar and text stay on one line */
+    margin-bottom: 8px; /* Add space between today indicator and flash sales title */
+  }
+
+  .title-container {
+    margin-top: 16px; /* Add spacing between Flash Sales and Timer */
+  }
+
+  /* Optional: Adjust the Flash Sales Title spacing */
+  .section-title {
+    margin-top: 16px; /* Adjust the gap between section title and the items below */
+  }
+  .navigation-buttons .nav-button {
+    pointer-events: none; /* Disable interaction */
+    opacity: 0; /* Optional: reduce opacity to indicate disabled state */
+  }
+}
