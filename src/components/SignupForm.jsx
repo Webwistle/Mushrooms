@@ -32,7 +32,9 @@ const SignupForm = () => {
         email,
         mobile,
         pinCode,
+        password,
         address,
+        cart: [],
         orders: [], // Empty array for ordered items
         uid: user.uid, // Storing UID for reference
       });
