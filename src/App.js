@@ -7,7 +7,9 @@ import {
 import { AuthProvider, useAuth } from "./context/AuthContext"; // Import AuthProvider
 import CreateAccountPage from "./Pages/CreateAccountPage";
 import LoginAccountPage from "./Pages/LoginAccountPage";
-import HomePage from "./Pages/Home";
+import ShoppingCart from "./components/ShoppingCart";
+import ContactForm from "./Pages/ContactForm";
+import Home from "./Pages/Home";
 
 function App() {
   return (
@@ -21,7 +23,23 @@ function App() {
             path="/home"
             element={
               <PrivateRoute>
-                <HomePage />
+                <Home />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/cart"
+            element={
+              <PrivateRoute>
+                <ShoppingCart /> {/* Add CartPage */}
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/contact"
+            element={
+              <PrivateRoute>
+                <ContactForm /> {/* Add CartPage */}
               </PrivateRoute>
             }
           />

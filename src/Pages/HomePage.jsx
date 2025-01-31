@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-import Header from "../components/Header";
+import HomeHeader from "../components/HomeHeader";
 import Footer from "../components/Footer";
 import { useAuth } from "../context/AuthContext";
 import { db } from "../firebaseConfig"; // Make sure to import your Firestore config
 import { doc, getDoc } from "firebase/firestore"; // Firestore functions to fetch data
+import Slider from "../components/ImageSlider";
 
 const HomePage = () => {
   const { user, logout } = useAuth(); // Accessing user and logout from AuthContext
@@ -34,8 +35,9 @@ const HomePage = () => {
 
   return (
     <div>
-      <Header />
+      <HomeHeader />
       <div>
+        <Slider />
         <h1>Home Page</h1>
         {user ? (
           <div>
