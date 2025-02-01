@@ -32,7 +32,6 @@ const ShoppingCart = () => {
     (sum, item) => sum + item.price * item.quantity,
     0
   );
-
   const loadRazorpayScript = () => {
     return new Promise((resolve) => {
       if (window.Razorpay) {
@@ -62,7 +61,9 @@ const ShoppingCart = () => {
       name: "LexicaAR",
       description: "Shopping Cart Payment",
       handler: async function (response) {
-        alert(`Payment Successful! Payment ID: ${response.razorpay_payment_id}`);
+        alert(
+          `Payment Successful! Payment ID: ${response.razorpay_payment_id}`
+        );
         console.log("Payment Response:", response);
 
         try {

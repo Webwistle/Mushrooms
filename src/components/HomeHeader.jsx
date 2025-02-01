@@ -31,7 +31,14 @@ const styles = {
     flex: 1,
     justifyContent: "center",
   },
-  navLink: { textDecoration: "none", color: "black", transition: "color 0.3s" },
+  navLink: {
+    textDecoration: "none",
+    color: "black",
+    transition: "color 0.3s",
+    backgroundColor: "#E8D8C3",
+    border: "none",
+    fontSize: "16px",
+  },
   iconsContainer: {
     display: "flex",
     alignItems: "center",
@@ -138,80 +145,82 @@ const HomeHeader = () => {
 
   return (
     <div>
-    <div className="base">Mushrooms</div>
-    <nav style={styles.nav}>
-      <div style={styles.logo}>Exclusive</div>
-      <div style={styles.navLinks}>
-        <a style={styles.navLink}>Home</a>
-        <a style={styles.navLink} onClick={() => navigate("/contact")}>
-          Contact
-        </a>
-        <a style={styles.navLink}>About</a>
-        <a style={styles.navLink}>Sign Up</a>
-      </div>
-      <div style={styles.searchContainer}>
-        <input
-          type="text"
-          placeholder="What are you looking for?"
-          style={styles.searchInput}
-        />
-        <Search style={styles.searchIcon} />
-      </div>
-      <div style={styles.iconsContainer}>
-        <Heart style={styles.icon} />
-        <div style={{ position: "relative" }} onClick={handleCartClick}>
-          <ShoppingCart style={styles.icon} />
-          {cartItemCount > 0 && (
-            <span
-              style={{
-                position: "absolute",
-                top: "-5px",
-                right: "-5px",
-                backgroundColor: "red",
-                color: "white",
-                fontSize: "12px",
-                borderRadius: "50%",
-                padding: "2px 6px",
-              }}
-            >
-              {cartItemCount}
-            </span>
-          )}
+      <div className="base">Mushrooms</div>
+      <nav style={styles.nav}>
+        <div style={styles.logo}>Exclusive</div>
+        <div style={styles.navLinks}>
+          <button style={styles.navLink} onClick={() => navigate("/home")}>
+            Home
+          </button>
+          <button style={styles.navLink} onClick={() => navigate("/contact")}>
+            Contact
+          </button>
+          <button style={styles.navLink}>About</button>
+          <button style={styles.navLink}>Sign Up</button>
         </div>
-        <div style={{ position: "relative" }}>
-          <User style={styles.icon} onClick={toggleDropdown} />
-          {dropdownOpen && (
-            <div style={styles.dropdownMenu}>
-              <div style={styles.dropdownItem}>
-                <User size={18} onClick={() => navigate("/editprofile")} />
-                Manage My Account
-              </div>
-              <div
+        <div style={styles.searchContainer}>
+          <input
+            type="text"
+            placeholder="What are you looking for?"
+            style={styles.searchInput}
+          />
+          <Search style={styles.searchIcon} />
+        </div>
+        <div style={styles.iconsContainer}>
+          <Heart style={styles.icon} />
+          <div style={{ position: "relative" }} onClick={handleCartClick}>
+            <ShoppingCart style={styles.icon} />
+            {cartItemCount > 0 && (
+              <span
                 style={{
-                  ...styles.dropdownItem,
-                  ...styles.dropdownItemDisabled,
+                  position: "absolute",
+                  top: "-5px",
+                  right: "-5px",
+                  backgroundColor: "red",
+                  color: "white",
+                  fontSize: "12px",
+                  borderRadius: "50%",
+                  padding: "2px 6px",
                 }}
               >
-                <ClipboardList size={18} /> My Order
+                {cartItemCount}
+              </span>
+            )}
+          </div>
+          <div style={{ position: "relative" }}>
+            <User style={styles.icon} onClick={toggleDropdown} />
+            {dropdownOpen && (
+              <div style={styles.dropdownMenu}>
+                <div style={styles.dropdownItem}>
+                  <User size={18} onClick={() => navigate("/editprofile")} />
+                  Manage My Account
+                </div>
+                <div
+                  style={{
+                    ...styles.dropdownItem,
+                    ...styles.dropdownItemDisabled,
+                  }}
+                >
+                  <ClipboardList size={18} /> My Order
+                </div>
+                <div style={styles.dropdownItem}>
+                  <X size={18} /> My Cancellations
+                </div>
+                <div style={styles.dropdownItem}>
+                  <Star size={18} /> My Reviews
+                </div>
+                <div style={styles.dropdownSeparator}></div>
+                <div
+                  style={styles.dropdownItem}
+                  onClick={() => console.log("Logging out...")}
+                >
+                  <LogOut size={18} /> Logout
+                </div>
               </div>
-              <div style={styles.dropdownItem}>
-                <X size={18} /> My Cancellations
-              </div>
-              <div style={styles.dropdownItem}>
-                <Star size={18} /> My Reviews
-              </div>
-              <div style={styles.dropdownSeparator}></div>
-              <div
-                style={styles.dropdownItem}
-                onClick={() => console.log("Logging out...")}
-              >
-                <LogOut size={18} /> Logout
-              </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
-      </div>
-    </nav>
+      </nav>
     </div>
   );
 };
