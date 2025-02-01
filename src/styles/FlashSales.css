@@ -99,8 +99,8 @@
 
 .item {
   /* Prevent shrinking and set width to 280px */
-  width: 280px;
-  height: 220px;
+  width: 238px;
+  height: 210px;
   flex-shrink: 0;
 }
 
