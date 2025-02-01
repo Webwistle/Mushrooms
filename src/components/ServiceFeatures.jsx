@@ -14,7 +14,7 @@ const ServiceFeatures = () => {
       description: "Friendly 24/7 customer support",
     },
     {
-      icon: "✔️",
+      icon: "✔",
       title: "MONEY BACK GUARANTEE",
       description: "We return money within 30 days",
     },
