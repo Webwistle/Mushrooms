@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { MinusIcon, PlusIcon } from "lucide-react";
-import { db } from "../firebaseConfig"; // Assuming you have already initialized Firebase
-import { doc, getDoc, updateDoc } from "firebase/firestore";
-import { useAuth } from "../context/AuthContext"; // Assuming you have a custom auth context
+import { db } from "../firebaseConfig";
+import { doc, getDoc } from "firebase/firestore";
+import { useAuth } from "../context/AuthContext";
 import "../styles/ShoppingCart.css";
 import HomeHeader from "./HomeHeader";
+import axios from "axios"; // For sending SMS & Emails via backend
 
 const ShoppingCart = () => {
   const { user } = useAuth();
@@ -24,37 +24,77 @@ const ShoppingCart = () => {
           console.error("Error fetching cart:", error);
         }
       };
-
       getCartItems();
     }
   }, [user]);
-
-  const updateQuantity = async (id, delta) => {
-    let updatedItems = items
-      .map((item) =>
-        item.id === id
-          ? { ...item, quantity: Math.max(0, item.quantity + delta) }
-          : item
-      )
-      .filter((item) => item.quantity > 0); // Remove items with quantity 0
-
-    setItems(updatedItems);
-
-    // Update Firestore cart
-    if (user) {
-      const userRef = doc(db, "users", user.uid);
-      try {
-        await updateDoc(userRef, { cart: updatedItems });
-      } catch (error) {
-        console.error("Error updating cart:", error);
-      }
-    }
-  };
 
   const subtotal = items.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0
   );
+
+  const loadRazorpayScript = () => {
+    return new Promise((resolve) => {
+      if (window.Razorpay) {
+        resolve(true);
+        return;
+      }
+      const script = document.createElement("script");
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  };
+
+  const handlePayment = async () => {
+    const isScriptLoaded = await loadRazorpayScript();
+
+    if (!isScriptLoaded) {
+      alert("Failed to load Razorpay. Please check your internet connection.");
+      return;
+    }
+
+    const options = {
+      key: "rzp_test_nKPAWKJBjDN0HX",
+      amount: subtotal * 100,
+      currency: "INR",
+      name: "LexicaAR",
+      description: "Shopping Cart Payment",
+      handler: async function (response) {
+        alert(`Payment Successful! Payment ID: ${response.razorpay_payment_id}`);
+        console.log("Payment Response:", response);
+
+        try {
+          // ✅ Fix: Changed to HTTP & added try-catch for debugging
+          const res = await axios.post("http://localhost:3000/send-message", {
+            userName: user?.displayName || "Ganesh Avupati",
+            userEmail: user?.email || "20093cm010@gmail.com",
+            userPhone: "6300648016",
+            sellerPhone: "9100299634", // Seller contact number
+            orderId: response.razorpay_payment_id,
+            amount: subtotal,
+          });
+
+          console.log("Message sent successfully:", res.data);
+        } catch (error) {
+          console.error("Error sending message:", error);
+          alert("Failed to send message. Check console for details.");
+        }
+      },
+      prefill: {
+        name: user?.displayName || "Ganesh Avupati",
+        email: user?.email || "20093cm010@gmail.com",
+        contact: "6300648016",
+      },
+      theme: {
+        color: "#DB4444",
+      },
+    };
+
+    const rzp = new window.Razorpay(options);
+    rzp.open();
+  };
 
   return (
     <>
@@ -82,24 +122,10 @@ const ShoppingCart = () => {
               <div className="custom-quantity">
                 <input
                   type="text"
-                  value={String(item.quantity).padStart(2, "0")} // Adds leading zero like in the image
+                  value={String(item.quantity).padStart(2, "0")}
                   readOnly
                   className="quantity-display"
                 />
-                <div className="quantity-buttons">
-                  <button
-                    onClick={() => updateQuantity(item.id, 1)}
-                    className="up-button"
-                  >
-                    ▲
-                  </button>
-                  <button
-                    onClick={() => updateQuantity(item.id, -1)}
-                    className="down-button"
-                  >
-                    ▼
-                  </button>
-                </div>
               </div>
             </div>
             <div>${item.price * item.quantity}</div>
@@ -112,15 +138,6 @@ const ShoppingCart = () => {
         </div>
 
         <div className="cart-total">
-          <div className="coupon">
-            <input
-              type="text"
-              placeholder="Coupon Code"
-              className="coupon-input"
-            />
-            <button className="apply-button">Apply</button>
-          </div>
-
           <div className="total-info">
             <h3>Cart Total</h3>
             <div className="total-item">
@@ -135,7 +152,9 @@ const ShoppingCart = () => {
               <span>Total:</span>
               <span>${subtotal}</span>
             </div>
-            <button className="checkout-button">Proceed to Checkout</button>
+            <button className="checkout-button" onClick={handlePayment}>
+              Proceed to Checkout
+            </button>
           </div>
         </div>
       </div>

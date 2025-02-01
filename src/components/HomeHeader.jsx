@@ -96,6 +96,8 @@ const HomeHeader = () => {
   }, [user]);
 
   return (
+    <div>
+    <div className="base">Mushrooms</div>
     <nav style={styles.nav}>
       <div style={styles.logo}>Exclusive</div>
       <div style={styles.navLinks}>
@@ -144,6 +146,7 @@ const HomeHeader = () => {
         <User style={styles.icon} />
       </div>
     </nav>
+    </div>
   );
 };
 
