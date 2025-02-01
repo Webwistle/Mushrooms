@@ -10,6 +10,7 @@ import LoginAccountPage from "./Pages/LoginAccountPage";
 import ShoppingCart from "./components/ShoppingCart";
 import ContactForm from "./Pages/ContactForm";
 import Home from "./Pages/Home";
+import EditProfile from "./Pages/EditProfile";
 
 function App() {
   return (
@@ -40,6 +41,14 @@ function App() {
             element={
               <PrivateRoute>
                 <ContactForm /> {/* Add CartPage */}
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/editprofile"
+            element={
+              <PrivateRoute>
+                <EditProfile /> {/* Add CartPage */}
               </PrivateRoute>
             }
           />
