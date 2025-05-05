@@ -40,5 +40,4 @@ const BestSeller = ({ items }) => {
     </div>
   );
 };
-
 export default BestSeller;

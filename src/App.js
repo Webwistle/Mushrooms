@@ -11,6 +11,7 @@ import ShoppingCart from "./components/ShoppingCart";
 import ContactForm from "./Pages/ContactForm";
 import Home from "./Pages/Home";
 import EditProfile from "./Pages/EditProfile";
+import Wishlist from "./components/Wishlist";
 
 function App() {
   return (
@@ -41,6 +42,14 @@ function App() {
             element={
               <PrivateRoute>
                 <ContactForm /> {/* Add CartPage */}
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/wish"
+            element={
+              <PrivateRoute>
+                <Wishlist /> {/* Add CartPage */}
               </PrivateRoute>
             }
           />

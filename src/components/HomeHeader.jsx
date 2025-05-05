@@ -118,11 +118,16 @@ const styles = {
 const HomeHeader = () => {
   const { user } = useAuth();
   const [cartItemCount, setCartItemCount] = useState(0);
+  const [wishlistCount, setWishlistCount] = useState(0);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+
   const navigate = useNavigate();
 
   const handleCartClick = () => {
     navigate("/cart");
+  };
+  const handleWishlistClick = () => {
+    navigate("/wish");
   };
 
   const toggleDropdown = () => {
@@ -134,12 +139,20 @@ const HomeHeader = () => {
       const userRef = doc(db, "users", user.uid);
       const unsubscribe = onSnapshot(userRef, (docSnap) => {
         if (docSnap.exists()) {
-          const cart = docSnap.data().cart || [];
+          const data = docSnap.data();
+
+          // Cart Count
+          const cart = data.cart || [];
           const totalItems = cart.reduce((acc, item) => acc + item.quantity, 0);
           setCartItemCount(totalItems);
+
+          // Wishlist Count
+          const wishlist = data.wishlist || [];
+          setWishlistCount(wishlist.length);
         }
       });
-      return () => unsubscribe();
+
+      return () => unsubscribe(); // Clean up listener on unmount
     }
   }, [user]);
 
@@ -167,7 +180,25 @@ const HomeHeader = () => {
           <Search style={styles.searchIcon} />
         </div>
         <div style={styles.iconsContainer}>
-          <Heart style={styles.icon} />
+          <div style={{ position: "relative" }} onClick={handleWishlistClick}>
+            <Heart style={styles.icon} />
+            {wishlistCount > 0 && (
+              <span
+                style={{
+                  position: "absolute",
+                  top: "-5px",
+                  right: "-5px",
+                  backgroundColor: "red",
+                  color: "white",
+                  fontSize: "12px",
+                  borderRadius: "50%",
+                  padding: "2px 6px",
+                }}
+              >
+                {wishlistCount}
+              </span>
+            )}
+          </div>
           <div style={{ position: "relative" }} onClick={handleCartClick}>
             <ShoppingCart style={styles.icon} />
             {cartItemCount > 0 && (
@@ -224,5 +255,4 @@ const HomeHeader = () => {
     </div>
   );
 };
-
 export default HomeHeader;

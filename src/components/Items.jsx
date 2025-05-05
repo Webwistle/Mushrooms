@@ -58,13 +58,52 @@ const Item = ({ id, image, name, price, originalPrice, discount }) => {
       alert("Failed to add item. Check console for details.");
     }
   };
+  const addToWishlist = async () => {
+    if (!user) {
+      alert("Please log in to add items to your wishlist.");
+      return;
+    }
+
+    const userId = user.uid;
+    const userRef = doc(db, "users", userId);
+
+    try {
+      const userSnap = await getDoc(userRef);
+      let wishlist =
+        userSnap.exists() && userSnap.data().wishlist
+          ? userSnap.data().wishlist
+          : [];
+
+      // Check if item already exists
+      const exists = wishlist.some((item) => item.id === id);
+      if (exists) {
+        alert("Item already in wishlist.");
+        return;
+      }
+
+      wishlist.push({
+        id,
+        name,
+        price,
+        image,
+        originalPrice: originalPrice || null,
+        discount: discount || null,
+      });
+
+      await updateDoc(userRef, { wishlist });
+      alert(`${name} added to wishlist!`);
+    } catch (error) {
+      console.error("Error adding to wishlist:", error);
+      alert("Failed to add item to wishlist.");
+    }
+  };
 
   return (
     <div className="item-container">
       <div className="item">
         <div className="item-image-container">
           {discount && <span className="discount-badge">-{discount}%</span>}
-          <button className="icon-button wishlist">
+          <button className="icon-button wishlist" onClick={addToWishlist}>
             <Heart />
           </button>
           <button className="icon-button quick-view">
