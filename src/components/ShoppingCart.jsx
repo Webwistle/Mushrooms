@@ -1,9 +1,7 @@
 // ShoppingCart.jsx
 import React, { useState, useEffect } from "react";
 import { db } from "../firebaseConfig";
-import { doc, getDoc,updateDoc } from "firebase/firestore";
-
-
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { useAuth } from "../context/AuthContext";
 import "../styles/ShoppingCart.css";
 import HomeHeader from "./HomeHeader";
@@ -59,11 +57,11 @@ const ShoppingCart = () => {
       key: "rzp_test_nKPAWKJBjDN0HX",
       amount: subtotal * 100,
       currency: "INR",
-      name: "LexicaAR",
+      name: "Mushrooms",
       description: "Shopping Cart Payment",
       handler: async function (response) {
         alert(`Payment Successful! Payment ID: ${response.razorpay_payment_id}`);
-      
+
         const userRef = doc(db, "users", user.uid);
         try {
           const userSnap = await getDoc(userRef);
@@ -71,37 +69,44 @@ const ShoppingCart = () => {
             alert("User document not found.");
             return;
           }
-      
+
           const userData = userSnap.data();
           const cartItems = userData.cart || [];
-      
-          // Append to orders array or initialize if not present
+
+          const cartItemsWithImages = cartItems.map((item) => ({
+            id: item.id,
+            name: item.name,
+            price: item.price,
+            quantity: item.quantity,
+            image: item.image,
+          }));
+
           const updatedOrders = userData.orders ? [...userData.orders] : [];
           updatedOrders.push({
             orderId: response.razorpay_payment_id,
             date: new Date().toISOString(),
-            items: cartItems,
+            items: cartItemsWithImages,
             total: subtotal,
           });
-      
+
           await updateDoc(userRef, {
             orders: updatedOrders,
             cart: [],
           });
-      
-          setItems([]); // Update local state
+
+          setItems([]);
           alert("Order saved and cart cleared successfully.");
-      
-          // Optional: Send confirmation message
+
+          // ✅ Use userData.email from database instead of hardcoded value
           const res = await axios.post("http://localhost:3000/send-message", {
-            userName: user?.displayName || "Ganesh Avupati",
-            userEmail: "avupatig@gmail.com",
-            userPhone: "6300648016",
+            userName: user?.displayName || userData.name || "LexicaAR User",
+            userEmail: userData.email || user?.email,
+            userPhone: userData.phone || "6300648016",
             sellerEmail: "20093cm010@gmail.com",
             orderId: response.razorpay_payment_id,
             amount: subtotal,
           });
-      
+
           alert("Message sent successfully");
           console.log("Message sent:", res.data);
         } catch (error) {
@@ -138,9 +143,9 @@ const ShoppingCart = () => {
           <div key={item.id} className="cart-item">
             <div className="cart-item-info">
               <img src={item.image} alt={item.name} className="cart-item-image" />
-              <span>{item.name}</span>
+              <div className="cart-item-name">{item.name}</div>
             </div>
-            <div>${item.price}</div>
+            <div className="cart-item-price">${item.price}</div>
             <div className="quantity-controls">
               <div className="custom-quantity">
                 <input
@@ -151,7 +156,7 @@ const ShoppingCart = () => {
                 />
               </div>
             </div>
-            <div>${item.price * item.quantity}</div>
+            <div className="cart-item-subtotal">${item.price * item.quantity}</div>
           </div>
         ))}
 

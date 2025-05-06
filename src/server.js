@@ -33,6 +33,8 @@ const sendEmail = (to, subject, message) => {
 app.post('/send-message', (req, res) => {
   const { userName, userEmail, userPhone, sellerEmail, orderId, amount } = req.body;
 
+  console.log('📦 Received POST data:', req.body); // Debug: log input
+
   const message = `
     <h3>Order Confirmation</h3>
     <p><strong>Order ID:</strong> ${orderId}</p>
@@ -41,21 +43,25 @@ app.post('/send-message', (req, res) => {
     <p><strong>Amount Paid:</strong> ₹${amount}</p>
   `;
 
-  sendEmail(userEmail, 'Your LexicaAR Order Confirmation', message) // sent to buyer
+  sendEmail(userEmail, 'Your Mushrooms Order Confirmation', message) // sent to buyer
     .then(() => {
-      console.log('Email sent to buyer');
-      return sendEmail(sellerEmail, 'New LexicaAR Order Received', message); // sent to seller
+      console.log('✅ Email sent to buyer');
+      return sendEmail(sellerEmail, 'New Mushrooms Order Received', message); // sent to seller
     })
     .then(() => {
-      console.log('Email sent to seller');
+      console.log('✅ Email sent to seller');
       res.status(200).send({ success: true, message: 'Emails sent successfully' });
     })
     .catch((error) => {
-      console.error('Error sending emails:', error);
-      res.status(500).send({ success: false, message: 'Failed to send emails' });
+      console.error('❌ Error sending emails:', error); // Debug: log full error
+      res.status(500).send({
+        success: false,
+        message: 'Failed to send emails',
+        error: error.message, // Optional: send error back to frontend
+      });
     });
 });
 
 app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
+  console.log(`🚀 Server running at http://localhost:${port}`);
 });
