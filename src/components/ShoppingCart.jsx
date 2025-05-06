@@ -1,10 +1,13 @@
+// ShoppingCart.jsx
 import React, { useState, useEffect } from "react";
 import { db } from "../firebaseConfig";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc,updateDoc } from "firebase/firestore";
+
+
 import { useAuth } from "../context/AuthContext";
 import "../styles/ShoppingCart.css";
 import HomeHeader from "./HomeHeader";
-import axios from "axios"; // For sending SMS & Emails via backend
+import axios from "axios";
 
 const ShoppingCart = () => {
   const { user } = useAuth();
@@ -28,10 +31,8 @@ const ShoppingCart = () => {
     }
   }, [user]);
 
-  const subtotal = items.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0
-  );
+  const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
   const loadRazorpayScript = () => {
     return new Promise((resolve) => {
       if (window.Razorpay) {
@@ -61,26 +62,51 @@ const ShoppingCart = () => {
       name: "LexicaAR",
       description: "Shopping Cart Payment",
       handler: async function (response) {
-        alert(
-          `Payment Successful! Payment ID: ${response.razorpay_payment_id}`
-        );
-        console.log("Payment Response:", response);
-
+        alert(`Payment Successful! Payment ID: ${response.razorpay_payment_id}`);
+      
+        const userRef = doc(db, "users", user.uid);
         try {
-          // ✅ Fix: Changed to HTTP & added try-catch for debugging
+          const userSnap = await getDoc(userRef);
+          if (!userSnap.exists()) {
+            alert("User document not found.");
+            return;
+          }
+      
+          const userData = userSnap.data();
+          const cartItems = userData.cart || [];
+      
+          // Append to orders array or initialize if not present
+          const updatedOrders = userData.orders ? [...userData.orders] : [];
+          updatedOrders.push({
+            orderId: response.razorpay_payment_id,
+            date: new Date().toISOString(),
+            items: cartItems,
+            total: subtotal,
+          });
+      
+          await updateDoc(userRef, {
+            orders: updatedOrders,
+            cart: [],
+          });
+      
+          setItems([]); // Update local state
+          alert("Order saved and cart cleared successfully.");
+      
+          // Optional: Send confirmation message
           const res = await axios.post("http://localhost:3000/send-message", {
             userName: user?.displayName || "Ganesh Avupati",
-            userEmail: user?.email || "20093cm010@gmail.com",
+            userEmail: "avupatig@gmail.com",
             userPhone: "6300648016",
-            sellerPhone: "9100299634", // Seller contact number
+            sellerEmail: "20093cm010@gmail.com",
             orderId: response.razorpay_payment_id,
             amount: subtotal,
           });
-
-          console.log("Message sent successfully:", res.data);
+      
+          alert("Message sent successfully");
+          console.log("Message sent:", res.data);
         } catch (error) {
-          console.error("Error sending message:", error);
-          alert("Failed to send message. Check console for details.");
+          console.error("Error handling post-payment:", error);
+          alert("Something went wrong while processing your order.");
         }
       },
       prefill: {
@@ -111,11 +137,7 @@ const ShoppingCart = () => {
         {items.map((item) => (
           <div key={item.id} className="cart-item">
             <div className="cart-item-info">
-              <img
-                src={item.image}
-                alt={item.name}
-                className="cart-item-image"
-              />
+              <img src={item.image} alt={item.name} className="cart-item-image" />
               <span>{item.name}</span>
             </div>
             <div>${item.price}</div>

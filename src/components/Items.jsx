@@ -12,25 +12,25 @@ const Item = ({ id, image, name, price, originalPrice, discount }) => {
       alert("Please log in to add items to your cart.");
       return;
     }
-
+  
     const userId = user.uid;
     const userRef = doc(db, "users", userId);
-
+  
     try {
       const userSnap = await getDoc(userRef);
       let cart =
         userSnap.exists() && userSnap.data().cart ? userSnap.data().cart : [];
-
+  
       // Ensure valid item data
-      if (!id || !name || !price) {
-        console.error("Invalid item data:", { id, name, price });
+      if (!id || !name || !price || !image) {
+        console.error("Invalid item data:", { id, name, price, image });
         alert("Invalid item data. Please try again.");
         return;
       }
-
+  
       // Check if item is already in cart
       const itemIndex = cart.findIndex((item) => item.id === id);
-
+  
       if (itemIndex !== -1) {
         // Item already in cart, increase quantity
         cart[itemIndex].quantity += 1;
@@ -40,16 +40,17 @@ const Item = ({ id, image, name, price, originalPrice, discount }) => {
           id,
           name,
           price,
-          quantity: 1, // Ensure image is always defined
-          originalPrice: originalPrice || null, // Ensure originalPrice is defined
-          discount: discount || null, // Ensure discount is defined
+          image, // ✅ Add image here
+          quantity: 1,
+          originalPrice: originalPrice || null,
+          discount: discount || null,
         });
       }
-
-      // Filter out undefined or incomplete items (prevents Firestore error)
-      cart = cart.filter((item) => item.id && item.name && item.price);
-
-      // Update Firestore with the updated cart
+  
+      // Clean up invalid entries
+      cart = cart.filter((item) => item.id && item.name && item.price && item.image);
+  
+      // Update Firestore
       await updateDoc(userRef, { cart });
       console.log("Cart updated successfully!", cart);
       alert(`${name} added to cart!`);
@@ -58,6 +59,7 @@ const Item = ({ id, image, name, price, originalPrice, discount }) => {
       alert("Failed to add item. Check console for details.");
     }
   };
+  
   const addToWishlist = async () => {
     if (!user) {
       alert("Please log in to add items to your wishlist.");

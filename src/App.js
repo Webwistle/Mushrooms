@@ -12,6 +12,7 @@ import ContactForm from "./Pages/ContactForm";
 import Home from "./Pages/Home";
 import EditProfile from "./Pages/EditProfile";
 import Wishlist from "./components/Wishlist";
+import Orders from "./components/Orders";
 
 function App() {
   return (
@@ -53,6 +54,7 @@ function App() {
               </PrivateRoute>
             }
           />
+          <Route path="/orders" element={<Orders />} />
           <Route
             path="/editprofile"
             element={
