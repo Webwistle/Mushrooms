@@ -129,6 +129,9 @@ const HomeHeader = () => {
   const handleWishlistClick = () => {
     navigate("/wish");
   };
+  const handleOrdersClick = () => {
+    navigate("/orders");
+  };
 
   const toggleDropdown = () => {
     setDropdownOpen((prev) => !prev);
@@ -226,13 +229,8 @@ const HomeHeader = () => {
                   <User size={18} onClick={() => navigate("/editprofile")} />
                   Manage My Account
                 </div>
-                <div
-                  style={{
-                    ...styles.dropdownItem,
-                    ...styles.dropdownItemDisabled,
-                  }}
-                >
-                  <ClipboardList size={18} /> My Order
+                <div style={styles.dropdownItem} onClick={handleOrdersClick}>
+                    <ClipboardList size={18} /> My Orders
                 </div>
                 <div style={styles.dropdownItem}>
                   <X size={18} /> My Cancellations
